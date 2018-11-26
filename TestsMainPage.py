@@ -3,11 +3,16 @@ from unittest.mock import *
 import MainPage
 import sys
 
+inputFile = open('inputfile.txt', 'r')
+outputFile = open('outputfile.txt', 'w')
+
 def side_effect(arg):
     return values[arg]
 
 class TestMainPageMethods(unittest.TestCase):
 
+    global inputFile
+    global outputFile
     def setUp(self):
         pass
 
@@ -22,35 +27,21 @@ class TestMainPageMethods(unittest.TestCase):
         MockgetSelection.side_effect = [1, 1, 4]
         MockSignInCustomer.return_value = "In method SignInCustomer"
 
+    @patch('MainPage.getpass.getpass')
     @patch('MainPage.Customer')
-    def test_SignInCustomer(self, MockCustomer):
-        # # Already tested so no need to Sign In Again
-        # return
+    def test_SignInCustomer(self, MockCustomer, Mockgetpass):
 
-        # Change the Mocked Customers' return value
-        MockCustomer.return_value = None
-
-        # store the original STDIN and assing a new one
-        original_stdin = sys.stdin
-        inputFile = open('inputfile.txt', 'r')
-        sys.stdin = inputFile
-        # store the original STDOUT and assing a new one
-        original_stdout = sys.stdout
-        outputFile = open('outputfile.txt', 'w')
-        sys.stdout = outputFile
+        # Already tested so no need to Sign In Again
+        return
 
         # Test the method
+        Mockgetpass.return_value = 'Co' # mock password
+        MockCustomer.return_value = None
         MainPage.SignInCustomer()
 
-        # close the files
-        inputFile.close()
-        outputFile.close()
-        # change the stdin/stdout back to command line
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
-
+    @patch('MainPage.getpass.getpass')
     @patch('MainPage.Agent')
-    def SignInAgent(self, MockAgent):
+    def test_SignInAgent(self, MockAgent, Mockgetpass):
 
         # Already tested so no need to Sign In Again
         # Hence return
@@ -58,56 +49,38 @@ class TestMainPageMethods(unittest.TestCase):
 
         # Change the Mocked Agents' return value
         MockAgent.return_value = None
-
-        # store the original STDIN and assing a new one
-        original_stdin = sys.stdin
-        inputFile = open('inputfile.txt', 'r')
-        sys.stdin = inputFile
-        # store the original STDOUT and assing a new one
-        original_stdout = sys.stdout
-        outputFile = open('outputfile.txt', 'w')
-        sys.stdout = outputFile
-
+        Mockgetpass.return_value = 'Ro' # mock password
         MainPage.SignInAgent()
 
-        # close the files
-        inputFile.close()
-        outputFile.close()
-        # change the stdin/stdout back to command line
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
-
-    def test_RegisterCustomer(self):
+    @patch('MainPage.getpass.getpass')
+    def test_RegisterCustomer(self,Mockgetpass):
 
         # Already tested so no need to Register Customer again in the Database
         # Hence return
         return
 
-        # store the original STDIN and assing a new one
-        original_stdin = sys.stdin
-        inputFile = open('inputfile.txt', 'r')
-        sys.stdin = inputFile
-        # store the original STDOUT and assing a new one
-        original_stdout = sys.stdout
-        outputFile = open('outputfile.txt', 'w')
-        sys.stdout = outputFile
-
+        # Test the method
+        Mockgetpass.return_value = 'P1' # mock password
         MainPage.RegisterCustomer()
 
-        # close the files
-        inputFile.close()
-        outputFile.close()
-        # change the stdin/stdout back to command line
-        sys.stdin = original_stdin
-        sys.stdout = original_stdout
+    def tearDown(self):
+        pass
 
 if __name__ == '__main__':
+
+    # store the original STDIN and assing a new one
+    original_stdin = sys.stdin
+    sys.stdin = inputFile
+    # store the original STDOUT and assing a new one
+    original_stdout = sys.stdout
+    sys.stdout = outputFile
+
+    # Call the unit tests
     unittest.main()
 
-
-# def test_split(self):
-#     s = 'hello world'
-#     self.assertEqual(s.split(), ['hello', 'world'])
-#     # check that s.split fails when the separator is not a string
-#     with self.assertRaises(TypeError):
-#         s.split(2)
+    # close the files
+    inputFile.close()
+    outputFile.close()
+    # change the stdin/stdout back to command line
+    sys.stdin = original_stdin
+    sys.stdout = original_stdout
