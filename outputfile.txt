@@ -1,3 +1,2 @@
-Agent Sign-in Page
-Please enter a valid aid:
-Signed in as agent
+Customer Sign-in Page
+Please enter a valid cid:

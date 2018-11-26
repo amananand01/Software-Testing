@@ -22,12 +22,39 @@ class TestMainPageMethods(unittest.TestCase):
         MockgetSelection.side_effect = [1, 1, 4]
         MockSignInCustomer.return_value = "In method SignInCustomer"
 
-    @patch('MainPage.Agent')
-    def test_SignInAgent(self, MockAgent):
-
+    @patch('MainPage.Customer')
+    def test_SignInCustomer(self, MockCustomer):
         # # Already tested so no need to Sign In Again
-        # # Hence return
         # return
+
+        # Change the Mocked Customers' return value
+        MockCustomer.return_value = None
+
+        # store the original STDIN and assing a new one
+        original_stdin = sys.stdin
+        inputFile = open('inputfile.txt', 'r')
+        sys.stdin = inputFile
+        # store the original STDOUT and assing a new one
+        original_stdout = sys.stdout
+        outputFile = open('outputfile.txt', 'w')
+        sys.stdout = outputFile
+
+        # Test the method
+        MainPage.SignInCustomer()
+
+        # close the files
+        inputFile.close()
+        outputFile.close()
+        # change the stdin/stdout back to command line
+        sys.stdin = original_stdin
+        sys.stdout = original_stdout
+
+    @patch('MainPage.Agent')
+    def SignInAgent(self, MockAgent):
+
+        # Already tested so no need to Sign In Again
+        # Hence return
+        return
 
         # Change the Mocked Agents' return value
         MockAgent.return_value = None
@@ -74,12 +101,13 @@ class TestMainPageMethods(unittest.TestCase):
         sys.stdin = original_stdin
         sys.stdout = original_stdout
 
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
-
 if __name__ == '__main__':
     unittest.main()
+
+
+# def test_split(self):
+#     s = 'hello world'
+#     self.assertEqual(s.split(), ['hello', 'world'])
+#     # check that s.split fails when the separator is not a string
+#     with self.assertRaises(TypeError):
+#         s.split(2)
