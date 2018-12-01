@@ -13,6 +13,7 @@ class TestMainPageMethods(unittest.TestCase):
 
     global inputFile
     global outputFile
+
     def setUp(self):
         pass
 
