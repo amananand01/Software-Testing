@@ -3,10 +3,23 @@ from unittest.mock import *
 import MainPage
 import Agent
 import sys
+import sqlite3
 
 inputFile  = open('inputfile.txt', 'r')
 outputFile = open('outputfile.txt', 'w')
 DBpath     = "./miniproject.db"
+
+connection = None
+cursor = None
+
+def connectToDataBase(path):
+    global connection, cursor
+
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    cursor.execute(' PRAGMA forteign_keys=ON; ')
+    connection.commit()
+    return
 
 class TestAgent(unittest.TestCase):
 
@@ -55,11 +68,27 @@ class TestAgent(unittest.TestCase):
 
         pickupTime = '2014-10-22 03:32:43'
         orderId = 110
-        dropoffTime = None
+        dropoffTime = '2014-10-22 03:32:43'
+
         MockRandomNumber.side_effect = [7886, 7886, 7889, 8998]
         MockGetTrackingNumbers.return_value = [7777,8989,7886]
+
+        # connect and set order
         Agent.connect(DBpath)
         Agent.agents_set_order(orderId, pickupTime, dropoffTime)
+
+
+        connectToDataBase(DBpath)
+        rows=cursor.execute('''select *
+                                from deliveries
+                                where trackingNo=7889;''')
+        row=rows.fetchone()
+        actualOutput = str(row[0]) + "|" + str(row[1]) + "|" + str(row[2])\
+                        + "|" + str(row[3])
+
+        expectedOutput = "7889|110|2014-10-22 03:32:43|2014-10-22 03:32:43"
+
+        assert expectedOutput == actualOutput
 
     def test_deliveries_arrived(self):
 
